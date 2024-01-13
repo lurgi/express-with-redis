@@ -40,13 +40,20 @@ const app_1 = require("./app");
 const redis = __importStar(require("redis"));
 let app;
 let client;
+const REDIS_URL = "redis://localhost:6379";
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
-    client = redis.createClient({ url: "redis://localhost:6379" });
+    client = redis.createClient({ url: REDIS_URL });
     yield client.connect();
     app = (0, app_1.createApp)(client);
 }));
 beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
+    // delete Redis List after each testing
     yield client.flushDb();
+}));
+afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
+    yield client.flushDb();
+    // End Redis Server after testing
+    yield client.quit();
 }));
 describe("message POST", () => {
     it("response with a success message", () => __awaiter(void 0, void 0, void 0, function* () {
@@ -59,7 +66,9 @@ describe("message POST", () => {
 });
 describe("message GET", () => {
     it("response all messages", () => __awaiter(void 0, void 0, void 0, function* () {
+        yield client.lPush("messages", ["msg1", "msg2"]);
         const response = yield (0, supertest_1.default)(app).get("/messages");
         expect(response.statusCode).toBe(200);
+        expect(response.body).toStrictEqual(["msg2", "msg1"]);
     }));
 });
