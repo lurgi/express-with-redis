@@ -10,6 +10,7 @@ if (!PORT) throw new Error("PORT is requried");
 if (!REDIS_URL) throw new Error("REDIS URL is requried");
 
 async function startServer() {
+  console.log("Trying to start server!");
   const client = redis.createClient({ url: REDIS_URL });
   client.connect();
 
