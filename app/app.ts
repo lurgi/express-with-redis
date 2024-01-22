@@ -9,7 +9,7 @@ export const createApp = (client: RedisClient) => {
   app.use(express.json());
 
   app.get("/", (req, res) => {
-    res.status(200).send("👋hello from express, deployed on AWS Lightsail");
+    res.status(200).send("👋hello from express, deployed on AWS Lightsail!");
   });
 
   app.post("/messages", async (req, res) => {
@@ -19,6 +19,7 @@ export const createApp = (client: RedisClient) => {
   });
 
   app.get("/messages", async (req, res) => {
+    console.log(process.env.pm_id);
     const messages = await client.lRange("messages", 0, -1);
     return res.status(200).send(messages);
   });

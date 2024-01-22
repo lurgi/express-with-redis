@@ -1,0 +1,10 @@
+config:
+  target: http://3.39.51.39
+  phases:
+    - duration: 5
+      arrivalRate: 30
+
+scenarios:
+  - flow:
+      - get:
+          url: "/messages"
