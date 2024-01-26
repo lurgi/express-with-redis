@@ -16,9 +16,22 @@ async function startServer() {
 
   const app = createApp(client);
 
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`🚀App Listening at port ${PORT}`);
   });
+
+  return server;
 }
 
-startServer();
+const server = startServer();
+
+const gracefullShutdown = async () => {
+  const _server = await server;
+  _server.close(() => {
+    console.log("Graceful Shutdown!");
+    process.exit();
+  });
+};
+
+process.on("SIGTERM", gracefullShutdown);
+process.on("SIGTERM", gracefullShutdown);

@@ -1,4 +1,7 @@
-FROM node:18
+# build 
+FROM node:18 as build
+
+WORKDIR /usr/src/my-app
 
 COPY package*.json .
 
@@ -8,4 +11,16 @@ COPY . .
 
 RUN npm run build
 
-CMD [ "npm","start" ]
+#production
+FROM node:18 as production
+
+WORKDIR /usr/src/my-app
+
+COPY --from=build ./usr/src/my-app/build ./build
+COPY --from=build ./usr/src/my-app/package.json ./package.json
+COPY --from=build ./usr/src/my-app/package-lock.json ./package-lock.json
+
+RUN npm install --onlyproduction
+
+CMD [ "node","build/index.js" ]
+
